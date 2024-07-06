@@ -21,6 +21,8 @@ The LVGL library can be installed by the Arduino library manager, but
  lv_conf.h
  lvgl
 ``` 
+Note that as of 6 Jul 2024, the version of LVGL in use is 7.11 and
+note also that this appears to be important.
 
 These have to be installed "by hand". Find them here: 
 https://github.com/ttlappalainen
