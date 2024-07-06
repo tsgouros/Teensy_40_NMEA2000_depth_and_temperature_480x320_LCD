@@ -1,0 +1,13 @@
+3 Jul 2024 (Wed, 09:33)
+
+Compiles and appears to run, communicates successfully with an Airmar
+DT800 depth/temperature transducer. It looks like there is some kind
+of memory issue in the touchpad controller. It is commented out now
+(see skp_lvgl.cpp) so not an issue for now, but should be looked at.
+
+6 Jul 2024 (Sat, 13:10)
+
+Depth is displayed correctly, verified a little bit with charts and
+lead line, but the temperature is not. Not sure if that's a problem
+with the Temperature() function, but it seems more likely to be
+something else, since that hasn't been touched.
