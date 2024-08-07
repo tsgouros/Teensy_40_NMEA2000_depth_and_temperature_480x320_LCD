@@ -181,7 +181,8 @@ void skp_lvgl_init(void)
     lv_obj_t * label_text_degree = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_pos(label_text_degree, 450, 166);
     lv_obj_add_style(label_text_degree, LV_OBJ_PART_MAIN,&style_text);
-    lv_label_set_text(label_text_degree, "°C");
+    //lv_label_set_text(label_text_degree, "°C");
+    lv_label_set_text(label_text_degree, "°F");
 
     static lv_style_t style_mps;
     lv_style_init(&style_mps);
@@ -193,7 +194,7 @@ void skp_lvgl_init(void)
     lv_obj_set_width(label_water_depth, 150);
     lv_label_set_align(label_water_depth, LV_LABEL_ALIGN_RIGHT); 
     lv_obj_set_pos(label_water_depth, 320, 30);
-    lv_obj_add_style(label_water_depth, LV_OBJ_PART_MAIN,&style_mps);
+    lv_obj_add_style(label_water_depth, LV_OBJ_PART_MAIN, &style_mps);
     lv_label_set_text(label_water_depth, "0.00");
 
     label_temperature = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
@@ -201,7 +202,7 @@ void skp_lvgl_init(void)
     lv_obj_set_width(label_temperature, 150);
     lv_label_set_align(label_temperature, LV_LABEL_ALIGN_RIGHT); 
     lv_obj_set_pos(label_temperature, 290, 140);
-    lv_obj_add_style(label_temperature, LV_OBJ_PART_MAIN,&style_mps);
+    lv_obj_add_style(label_temperature, LV_OBJ_PART_MAIN, &style_mps);
     lv_label_set_text(label_temperature, "-.-");
 
     Serial.println("tick.begin");
