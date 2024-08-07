@@ -202,7 +202,7 @@ void skp_lvgl_init(void)
     lv_label_set_align(label_temperature, LV_LABEL_ALIGN_RIGHT); 
     lv_obj_set_pos(label_temperature, 290, 140);
     lv_obj_add_style(label_temperature, LV_OBJ_PART_MAIN,&style_mps);
-    lv_label_set_text(label_temperature, "-.--");
+    lv_label_set_text(label_temperature, "-.-");
 
     Serial.println("tick.begin");
     tick.begin(lv_tick_handler, LVGL_TICK_PERIOD * 1000);  // Start ticker

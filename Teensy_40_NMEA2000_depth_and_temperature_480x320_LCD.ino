@@ -102,16 +102,18 @@ void Depth(const tN2kMsg &N2kMsg) {
       // Depth is in meters. Convert to feet.
       DepthBelowTransducer = DepthBelowTransducer * (39.3/12);
 
-      sprintf(buff,"%2.2f", DepthBelowTransducer);
+      sprintf(buff,"%2.0f", DepthBelowTransducer);
       lv_label_set_text(label_water_depth, buff);    // Update depth on LCD
    
-      // Make the needle pin at 80ft.
+      // Make the needle pin at 80ft. (std::min requires including
+      // another library.)
       DepthAngle_degree = (DepthBelowTransducer/80) * 360;
       if (DepthAngle_degree > 360) DepthAngle_degree = 360.0;
       Serial.print("Depth direction ");
       Serial.println(DepthAngle_degree);
    
-      lv_img_set_angle(lvneedle, DepthAngle_degree*10);   // Update needle on LCD, units 0.1 degree
+      // Update needle on LCD, units are 0.1 degree for some reason.
+      lv_img_set_angle(lvneedle, DepthAngle_degree*10);   
   
     } else {
       OutputStream->print("Failed to parse PGN: "); OutputStream->println(N2kMsg.PGN);
@@ -124,16 +126,20 @@ void Temperature(const tN2kMsg &N2kMsg) {
     tN2kTempSource TempSource;
     double ActualTemperature;
     double SetTemperature;  
-    double temperature;
+    double temperature, temperature;
 
     if (ParseN2kTemperature(N2kMsg,SID,TempInstance,TempSource,ActualTemperature,SetTemperature) ) 
     {
-        temperature = ActualTemperature - 273.15;   // Convert K to C
+      // Convert K to C
+      //temperature = ActualTemperature - 273.15; 
+      // Convert K to F
+      temperature = (ActualTemperature - 273.15) * (9/5) + 32; 
         
-        Serial.print("Temperature ");
-        Serial.println(temperature);
-        sprintf(buff,"%2.1f",temperature);
-        lv_label_set_text(label_temperature, buff);   // Update temperature on LCD
+      Serial.print("Temperature ");
+      Serial.println(temperature);
+      sprintf(buff,"%2.1f",temperature);
+      // Update temperature on LCD
+      lv_label_set_text(label_temperature, buff); 
 
     } else {
       OutputStream->print("Failed to parse PGN: ");  OutputStream->println(N2kMsg.PGN);
