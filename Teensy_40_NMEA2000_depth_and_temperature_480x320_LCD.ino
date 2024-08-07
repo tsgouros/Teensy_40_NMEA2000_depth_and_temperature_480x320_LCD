@@ -44,7 +44,7 @@ void setup() {
   // Do not forward bus messages at all
   NMEA2000.SetForwardType(tNMEA2000::fwdt_Text);
   NMEA2000.SetForwardStream(OutputStream);
-  // Set false below, if you do not want to see messages parsed to HEX withing library
+  // Set false below, if you do not want to see messages parsed to HEX within library
   NMEA2000.EnableForward(false);
   NMEA2000.SetMsgHandler(HandleNMEA2000Msg);
   //  NMEA2000.SetN2kCANMsgBufSize(2);
@@ -85,7 +85,6 @@ void SystemTime(const tN2kMsg &N2kMsg) {
 
 //*****************************************************************************
 void Depth(const tN2kMsg &N2kMsg) {
-   double pi = 3.1415;
 
    unsigned char SID;
    double DepthBelowTransducer;
@@ -100,10 +99,15 @@ void Depth(const tN2kMsg &N2kMsg) {
       Serial.print(DepthBelowTransducer);
       Serial.print(" ");
    
+      // Depth is in meters. Convert to feet.
+      DepthBelowTransducer = DepthBelowTransducer * (39.3/12);
+
       sprintf(buff,"%2.2f", DepthBelowTransducer);
       lv_label_set_text(label_water_depth, buff);    // Update depth on LCD
    
-      DepthAngle_degree = (std::min(DepthBelowTransducer, 62.8)/10) * (180/pi);
+      // Make the needle pin at 80ft.
+      DepthAngle_degree = (DepthBelowTransducer/80) * 360;
+      if (DepthAngle_degree > 360) DepthAngle_degree = 360.0;
       Serial.print("Depth direction ");
       Serial.println(DepthAngle_degree);
    
@@ -124,7 +128,7 @@ void Temperature(const tN2kMsg &N2kMsg) {
 
     if (ParseN2kTemperature(N2kMsg,SID,TempInstance,TempSource,ActualTemperature,SetTemperature) ) 
     {
-        temperature = ActualTemperature - 273.15;   // Covert K to C
+        temperature = ActualTemperature - 273.15;   // Convert K to C
         
         Serial.print("Temperature ");
         Serial.println(temperature);
@@ -200,7 +204,8 @@ void HandleNMEA2000Msg(const tN2kMsg &N2kMsg) {
   int iHandler;
   
   // Find handler
-  //OutputStream->print("In Main Handler: "); OutputStream->println(N2kMsg.PGN);
+  OutputStream->print("In Main Handler: "); OutputStream->println(N2kMsg.PGN);
+
   for (iHandler=0; NMEA2000Handlers[iHandler].PGN!=0 && !(N2kMsg.PGN==NMEA2000Handlers[iHandler].PGN); iHandler++);
   
   if (NMEA2000Handlers[iHandler].PGN!=0) {

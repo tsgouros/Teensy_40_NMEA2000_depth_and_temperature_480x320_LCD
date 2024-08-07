@@ -10,7 +10,7 @@
 #include <Adafruit_FT6206.h>
 
 LV_IMG_DECLARE(needle2);
-LV_IMG_DECLARE(compass3);
+LV_IMG_DECLARE(depthScreen);
 
 int LCD_BL = 14;
 int LCD_RST = 15;
@@ -148,7 +148,7 @@ void skp_lvgl_init(void)
 
 
     lv_obj_t * img = lv_img_create(central,NULL);
-    lv_img_set_src(img, &compass3);
+    lv_img_set_src(img, &depthScreen);
     lv_obj_set_size(img, 320, 320);
     lv_obj_set_pos(img,pos_x-14,pos_y-14);
   
@@ -171,7 +171,7 @@ void skp_lvgl_init(void)
     lv_obj_t * label_text_lb = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_pos(label_text_lb, 435, 77);
     lv_obj_add_style(label_text_lb, LV_OBJ_PART_MAIN,&style_text);
-    lv_label_set_text(label_text_lb, "MM");
+    lv_label_set_text(label_text_lb, "Ft");
 
     lv_obj_t * label_text_temp = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_pos(label_text_temp, 330, 120);
