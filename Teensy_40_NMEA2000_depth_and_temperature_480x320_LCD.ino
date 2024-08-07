@@ -126,7 +126,7 @@ void Temperature(const tN2kMsg &N2kMsg) {
     tN2kTempSource TempSource;
     double ActualTemperature;
     double SetTemperature;  
-    double temperature, temperature;
+    double temperature;
 
     if (ParseN2kTemperature(N2kMsg,SID,TempInstance,TempSource,ActualTemperature,SetTemperature) ) 
     {
