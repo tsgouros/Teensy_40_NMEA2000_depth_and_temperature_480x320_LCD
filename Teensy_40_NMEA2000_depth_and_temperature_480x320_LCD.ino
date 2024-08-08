@@ -109,6 +109,7 @@ void Depth(const tN2kMsg &N2kMsg) {
       // another library.)
       DepthAngle_degree = (DepthBelowTransducer/80) * 360;
       if (DepthAngle_degree > 360) DepthAngle_degree = 360.0;
+      DepthAngle_degree = 900 - DepthAngle_degree * 10;
       Serial.print("Depth direction ");
       Serial.println(DepthAngle_degree);
    
@@ -116,7 +117,8 @@ void Depth(const tN2kMsg &N2kMsg) {
       lv_img_set_angle(lvneedle, DepthAngle_degree*10);   
   
     } else {
-      OutputStream->print("Failed to parse PGN: "); OutputStream->println(N2kMsg.PGN);
+      OutputStream->print("Failed to parse PGN: "); 
+      OutputStream->println(N2kMsg.PGN);
     }
 }
 //*****************************************************************************
