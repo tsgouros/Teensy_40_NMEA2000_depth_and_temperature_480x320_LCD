@@ -130,6 +130,7 @@ void skp_lvgl_init(void)
     
     lv_disp_drv_register(&disp_drv);
 
+    // Initialize the touch screen and its driver.
     lv_indev_drv_t indev_drv;
     // Descriptor of a input device driver
     lv_indev_drv_init(&indev_drv);
@@ -139,6 +140,8 @@ void skp_lvgl_init(void)
     indev_drv.read_cb = my_touchpad_read;
     // Finally register the driver
     touchDevice = lv_indev_drv_register(&indev_drv);
+    // Important: the initialization is not completed until the
+    // invocation of the FT6206::begin() method, in skp_lvgl_init().
 
 
     lv_obj_set_style_local_bg_color (lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
@@ -157,7 +160,7 @@ void skp_lvgl_init(void)
   
     lvneedle = lv_img_create(lv_scr_act(),NULL);
     lv_img_set_src(lvneedle, &needle2);
-    lv_obj_set_pos(lvneedle,60,142);
+    lv_obj_set_pos(lvneedle, 60, 142);
 
     lv_img_set_angle(lvneedle, 900); // Units of .1 degree
 
