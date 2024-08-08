@@ -1,6 +1,5 @@
 
 
-
 #include <Arduino.h>
 #include "skp_lvgl.h"
 #include <lvgl.h>
@@ -21,13 +20,14 @@ int LCD_RST = 15;
 #define TFT_DC  9
 
 ILI9488_t3 display = ILI9488_t3(&SPI, TFT_CS, TFT_DC);
-Adafruit_FT6206 ts = Adafruit_FT6206();
+Adafruit_FT6206 touchScreen = Adafruit_FT6206();
 
 lv_obj_t * label_water_depth; 
 lv_obj_t * gauge1;
 lv_obj_t * label_temperature;
 int oldTouchX = 0;
 int oldTouchY = 0;
+lv_indev_t * touchDevice;
 
 int screenWidth = 480;
 int screenHeight = 320;
@@ -57,7 +57,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 }
 
 
-bool my_touchpad_read(lv_indev_t * indev, lv_indev_data_t * data)
+bool my_touchpad_read(lv_indev_drv_t * indev, lv_indev_data_t * data)
 {
     uint16_t touchX, touchY;
     Serial.println("in my_touchpad_read()");
@@ -69,10 +69,9 @@ bool my_touchpad_read(lv_indev_t * indev, lv_indev_data_t * data)
     }
 
     // Check if touchpad has been touched.
-    if (ts.touched()) {   
-      Serial.println("was touched");
-        // Retrieve a point  
-        TS_Point p = ts.getPoint(); 
+    if (touchScreen.touched()) {   
+      // Retrieve a point  
+      TS_Point p = touchScreen.getPoint(); 
     
         touchX = p.y;         // Rotate the co-ordinates
         touchY = p.x;
@@ -80,10 +79,10 @@ bool my_touchpad_read(lv_indev_t * indev, lv_indev_data_t * data)
   
          if ((touchX != oldTouchX) || (touchY != oldTouchY))
          {
-              Serial.print("x= ");
-              Serial.print(touchX,DEC);
-              Serial.print(" y= ");
-              Serial.println(touchY,DEC);
+              Serial.print("x = ");
+              Serial.print(touchX, DEC);
+              Serial.print("y = ");
+              Serial.println(touchY, DEC);
               
               oldTouchY = touchY;
               oldTouchX = touchX;
@@ -93,7 +92,6 @@ bool my_touchpad_read(lv_indev_t * indev, lv_indev_data_t * data)
          
          }
     } else {
-      Serial.println("was not touched");
         data->point.x = oldTouchX;
         data->point.y = oldTouchY;
         data->state =LV_INDEV_STATE_REL;
@@ -132,11 +130,16 @@ void skp_lvgl_init(void)
     
     lv_disp_drv_register(&disp_drv);
 
-//    lv_indev_drv_t indev_drv;
-//    lv_indev_drv_init(&indev_drv);             /*Descriptor of a input device driver*/
-//    indev_drv.type = LV_INDEV_TYPE_POINTER;    /*Touch pad is a pointer-like device*/
-//    indev_drv.read_cb = my_touchpad_read;      /*Set your driver function*/
-//    lv_indev_drv_register(&indev_drv);         /*Finally register the driver*/
+    lv_indev_drv_t indev_drv;
+    // Descriptor of a input device driver
+    lv_indev_drv_init(&indev_drv);
+    // Specify that a touch screen is a pointer-like device
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    // Set the driver function.
+    indev_drv.read_cb = my_touchpad_read;
+    // Finally register the driver
+    touchDevice = lv_indev_drv_register(&indev_drv);
+
 
     lv_obj_set_style_local_bg_color (lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_COLOR_BLACK);
     lv_obj_set_style_local_bg_opa( lv_scr_act(), LV_OBJ_PART_MAIN, LV_STATE_DEFAULT, LV_OPA_COVER);  
@@ -207,4 +210,10 @@ void skp_lvgl_init(void)
 
     Serial.println("tick.begin");
     tick.begin(lv_tick_handler, LVGL_TICK_PERIOD * 1000);  // Start ticker
+
+    if (touchScreen.begin(40)) { 
+      Serial.println("Touchscreen started."); 
+    } else { 
+      Serial.println("Unable to start touchscreen.");
+    }
 }
