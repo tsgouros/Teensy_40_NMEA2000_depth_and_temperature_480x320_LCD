@@ -11,3 +11,43 @@ Depth is displayed correctly, verified a little bit with charts and
 lead line, but the temperature is not. Not sure if that's a problem
 with the Temperature() function, but it seems more likely to be
 something else, since that hasn't been touched.
+
+5 Aug 2024 (Mon, 09:56)
+
+Procedure for turning a 320x320 png into a suitable background:
+
+ 1. Make a 320x320 image.
+
+ 2. Use the converter at https://lvgl.io/tools/imageconverter to
+    create a C code file from your image. Use the 'RGB565' format.
+
+ 3. Add #include <avr/pgmspace.h> to the file, and insert the PROGMEM
+    keyword into the declaration. It should look something like this:
+
+    const PROGMEM LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMAGE_DEPTHSCREEN uint8_t depthScreen_map[] = { ... }
+
+    Without this step, the program will overflow memory.
+
+ 4. To keep the resulting file compatible with LVGL 7.11, the const
+    declaration at the bottom should not have the .magic line, and
+    should be spelled differently from the newest LVGL.
+
+    const lv_img_dsc_t depthScreen = {
+      .header.cf = LV_IMG_CF_TRUE_COLOR,
+      .header.w = 320,
+      .header.h = 320,
+      .data_size = 102400 * 2,
+      .data = depthScreen_map,
+    };
+
+7 Aug 2024 (Wed, 23:53)
+
+Memory issue was uncovered. The Adafruit_FT6206 library requires the
+invocation of the begin() method before touched() will work. Without
+it, touched() causes a segfault, which gets the Teensy watchdog timer
+involved causing the whole thing to reboot every eight seconds or so.
+
+Also, discovered that extraneous files in the directory cause the
+brain-dead Arduino compiler/IDE to fail silently and refuse to upload
+to the device. So if you're wanting to save a little bit of code for
+the future, either comment it out or save it somewhere else.
