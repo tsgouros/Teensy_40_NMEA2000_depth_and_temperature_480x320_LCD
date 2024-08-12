@@ -20,10 +20,17 @@ typedef struct {
 void SystemTime(const tN2kMsg &N2kMsg);
 void Depth(const tN2kMsg &N2kMsg);
 void Temperature(const tN2kMsg &N2kMsg);
+void TemperatureA(const tN2kMsg &N2kMsg);
 
+// Spec for Airmar DT800:
+// https://airmartechnology.com/uploads/SpecApps/NMEA%202000%20Smart%20Sensors%20_%20ALL.pdf
+// There is some ambiguity about which PGN is reporting water temp in
+// my device. Testing multiples for now, will delete the others when I
+// figure out which one it is.
 tNMEA2000Handler NMEA2000Handlers[]={
   {126992L,&SystemTime},
-  {130312L,&Temperature},
+  {130310L,&Temperature},
+  {130311L,&TemperatureA},
   {128267L,&Depth},
   {0,0}
 };
@@ -93,7 +100,8 @@ void Depth(const tN2kMsg &N2kMsg) {
 
    double DepthAngle_degree;
 
-   if(ParseN2kWaterDepth(N2kMsg, SID, DepthBelowTransducer, DepthOffset, DepthRange)) 
+   if(ParseN2kWaterDepth(N2kMsg, SID, 
+                         DepthBelowTransducer, DepthOffset, DepthRange)) 
    {
       Serial.print("Depth ");
       Serial.print(DepthBelowTransducer);
@@ -122,15 +130,18 @@ void Depth(const tN2kMsg &N2kMsg) {
     }
 }
 //*****************************************************************************
+// For PGN 130310
 void Temperature(const tN2kMsg &N2kMsg) {
     unsigned char SID;
-    unsigned char TempInstance;
-    tN2kTempSource TempSource;
     double ActualTemperature;
-    double SetTemperature;  
+    double AirTemperature;  
+    double AirPressure;  
     double temperature;
 
-    if (ParseN2kTemperature(N2kMsg,SID,TempInstance,TempSource,ActualTemperature,SetTemperature) ) 
+    if (ParseN2kOutsideEnvironmentalParameters(N2kMsg, SID, 
+                                               ActualTemperature,
+                                               AirTemperature,
+                                               AirPressure) ) 
     {
       // Convert K to C
       //temperature = ActualTemperature - 273.15; 
@@ -138,6 +149,38 @@ void Temperature(const tN2kMsg &N2kMsg) {
       temperature = (ActualTemperature - 273.15) * (9/5) + 32; 
         
       Serial.print("Temperature ");
+      Serial.println(temperature);
+      sprintf(buff,"%2.1f",temperature);
+      // Update temperature on LCD
+      lv_label_set_text(label_temperature, buff); 
+
+    } else {
+      OutputStream->print("Failed to parse PGN: ");  OutputStream->println(N2kMsg.PGN);
+    }
+}
+//*****************************************************************************
+// For PGN 130311
+void TemperatureA(const tN2kMsg &N2kMsg) {
+    unsigned char SID;
+    tN2kTempSource TempSource;
+    double ActualTemperature;
+    tN2kHumiditySource HumiditySource;
+    double Humidity;
+    double AirPressure;  
+    double temperature;
+
+    if (ParseN2kEnvironmentalParameters(N2kMsg, SID,
+                                        TempSource, ActualTemperature,
+                                        HumiditySource, Humidity,
+                                        AirPressure) ) 
+    {
+      // Convert K to C
+      //temperature = ActualTemperature - 273.15; 
+      // Convert K to F
+      temperature = (ActualTemperature - 273.15) * (9/5) + 32; 
+      temperature = -temperature;
+        
+      Serial.print("TemperatureA ");
       Serial.println(temperature);
       sprintf(buff,"%2.1f",temperature);
       // Update temperature on LCD
