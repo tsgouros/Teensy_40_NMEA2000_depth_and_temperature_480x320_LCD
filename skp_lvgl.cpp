@@ -60,7 +60,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 bool my_touchpad_read(lv_indev_drv_t * indev, lv_indev_data_t * data)
 {
     uint16_t touchX, touchY;
-    Serial.println("in my_touchpad_read()");
+    //Serial.println("in my_touchpad_read()");
   
     // If there's no data, get out and go home.
     if (!data) {
@@ -97,7 +97,7 @@ bool my_touchpad_read(lv_indev_drv_t * indev, lv_indev_data_t * data)
         data->state =LV_INDEV_STATE_REL;
      }
 
-    Serial.println("at end of my_touchpad_read()");
+    //Serial.println("at end of my_touchpad_read()");
            
     return 0;
 }
