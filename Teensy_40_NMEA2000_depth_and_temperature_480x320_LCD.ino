@@ -108,8 +108,8 @@ void Depth(const tN2kMsg &N2kMsg) {
       // Make the needle pin at 80ft. (std::min requires including
       // another library.)
       DepthAngle_degree = (DepthBelowTransducer/80) * 360;
-      if (DepthAngle_degree > 360) DepthAngle_degree = 360.0;
-      DepthAngle_degree = 900 - DepthAngle_degree * 10;
+      if (DepthAngle_degree > 357) DepthAngle_degree = 357.0;
+      DepthAngle_degree = 900 + DepthAngle_degree * 10;
       Serial.print("Depth direction ");
       Serial.println(DepthAngle_degree);
    
