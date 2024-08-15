@@ -57,3 +57,7 @@ the future, either comment it out or save it somewhere else.
 Added a 'label_debug' that appears on the screen to hold whatever one
 might need to debug something when you are without access to the
 Serial Monitor. There's a SHOWDEBUG flag to toggle in skp_lvgl.h.
+
+15 Aug 2024 (Thu, 19:23)
+
+Added an ENGLISHUNITS flag, for better, um, international relations.
