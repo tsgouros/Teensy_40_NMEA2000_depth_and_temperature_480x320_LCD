@@ -22,8 +22,8 @@ typedef struct {
 
 void SystemTime(const tN2kMsg &N2kMsg);
 void Depth(const tN2kMsg &N2kMsg);
-void Temperature(const tN2kMsg &N2kMsg);
-void TemperatureA(const tN2kMsg &N2kMsg);
+void Temperature310(const tN2kMsg &N2kMsg);
+void Temperature311(const tN2kMsg &N2kMsg);
 
 // Spec for Airmar DT800:
 // https://airmartechnology.com/uploads/SpecApps/NMEA%202000%20Smart%20Sensors%20_%20ALL.pdf
