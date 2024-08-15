@@ -111,14 +111,14 @@ void Depth(const tN2kMsg &N2kMsg) {
       Serial.print(" ");
    
       // Depth is in meters. Convert to feet.
-      DepthBelowTransducer = DepthBelowTransducer * (39.3/12);
+      DepthBelowTransducer = DepthBelowTransducer * (39.3/12.0);
 
       sprintf(buff,"%2.0f", DepthBelowTransducer);
       lv_label_set_text(label_water_depth, buff);    // Update depth on LCD
    
       // Make the needle pin at 80ft. (std::min requires including
       // another library.)
-      DepthAngle_degree = (DepthBelowTransducer/80) * 360;
+      DepthAngle_degree = (DepthBelowTransducer/80.0) * 360.0;
       if (DepthAngle_degree > 357) DepthAngle_degree = 357.0;
 
 #if SHOWDEBUG == 1      
@@ -126,12 +126,12 @@ void Depth(const tN2kMsg &N2kMsg) {
       lv_label_set_text(label_debug, buff);
 #endif
 
-      DepthAngle_degree = 900 + DepthAngle_degree * 10;
+      DepthAngle_degree = 90.0 + DepthAngle_degree;
       Serial.print("Depth direction ");
       Serial.println(DepthAngle_degree);
    
       // Update needle on LCD, units are 0.1 degree for some reason.
-      lv_img_set_angle(lvneedle, DepthAngle_degree*10);   
+      lv_img_set_angle(lvneedle, DepthAngle_degree * 10);   
   
     } else {
       OutputStream->print("Failed to parse PGN: "); 
