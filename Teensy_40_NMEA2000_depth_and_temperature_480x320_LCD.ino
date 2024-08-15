@@ -13,7 +13,7 @@ extern lv_obj_t * label_temperature;
 extern lv_obj_t * label_debug;
 #endif
 
-char buff[20];
+char valBuf[20];
 
 typedef struct {
   unsigned long PGN;
@@ -27,16 +27,44 @@ void TemperatureA(const tN2kMsg &N2kMsg);
 
 // Spec for Airmar DT800:
 // https://airmartechnology.com/uploads/SpecApps/NMEA%202000%20Smart%20Sensors%20_%20ALL.pdf
-// There is some ambiguity about which PGN is reporting water temp in
-// my device. Testing multiples for now, will delete the others when I
-// figure out which one it is.
+// The device reports temperature on *both* 130310 and 130311. Go figure.
 tNMEA2000Handler NMEA2000Handlers[]={
   {126992L,&SystemTime},
-  {130310L,&Temperature},
-  {130311L,&TemperatureA},
+  {130310L,&Temperature310},
+  {130311L,&Temperature311},
   {128267L,&Depth},
   {0,0}
 };
+
+#if ENABLEROMAN == 1
+extern bool romanFlag;
+
+struct { int value; char romanDgts[3]; } romanTable[] = {
+  {1000, "M"}, {900, "CM"}, {500, "D"}, {400, "CD"}, {100, "C"}, {90, "XC"}, 
+  {50, "L"}, {40, "XL"}, {10, "X"}, {9, "IX"}, {5, "V"}, {4, "IV"}, {1, "I"}};
+
+void roman(int n, char* buf) {
+
+  buf[0] = '\0';
+  char* bufptr;
+
+  bufptr = buf; 
+
+  int i = 0;
+  while (n) {
+    // Find the next roman value bigger than n.
+    while (n < romanTable[i].value) i++;
+
+    // Add the string to the output...
+    while (n >= romanTable[i].value) {
+      strcat(bufptr, romanTable[i].romanDgts);
+      n -= romanTable[i].value;
+    }
+  }
+}
+
+#endif
+
 
 Stream *OutputStream;
 
@@ -113,8 +141,16 @@ void Depth(const tN2kMsg &N2kMsg) {
       // Depth is in meters. Convert to feet.
       DepthBelowTransducer = DepthBelowTransducer * (39.3/12.0);
 
-      sprintf(buff,"%2.0f", DepthBelowTransducer);
-      lv_label_set_text(label_water_depth, buff);    // Update depth on LCD
+#if ENABLEROMAN == 1
+      if (romanFlag) {
+        roman(DepthBelowTransducer, valBuf);
+      } else {
+        sprintf(valBuf,"%2.0f", DepthBelowTransducer);
+      }
+#else
+      sprintf(valBuf,"%2.0f", DepthBelowTransducer);
+#endif
+      lv_label_set_text(label_water_depth, valBuf);    // Update depth on LCD
    
       // Make the needle pin at 80ft. (std::min requires including
       // another library.)
@@ -122,8 +158,8 @@ void Depth(const tN2kMsg &N2kMsg) {
       if (DepthAngle_degree > 357) DepthAngle_degree = 357.0;
 
 #if SHOWDEBUG == 1      
-      sprintf(buff,"%2.0f", DepthAngle_degree);
-      lv_label_set_text(label_debug, buff);
+      sprintf(valBuf,"%2.0f", DepthAngle_degree);
+      lv_label_set_text(label_debug, valBuf);
 #endif
 
       DepthAngle_degree = 90.0 + DepthAngle_degree;
@@ -140,7 +176,7 @@ void Depth(const tN2kMsg &N2kMsg) {
 }
 //*****************************************************************************
 // For PGN 130310
-void Temperature(const tN2kMsg &N2kMsg) {
+void Temperature310(const tN2kMsg &N2kMsg) {
     unsigned char SID;
     double ActualTemperature;
     double AirTemperature;  
@@ -157,11 +193,20 @@ void Temperature(const tN2kMsg &N2kMsg) {
       // Convert K to F
       temperature = (ActualTemperature - 273.15) * 1.8 + 32.0; 
         
-      Serial.print("Temperature ");
+      Serial.print("Temperature310 ");
       Serial.println(temperature);
-      sprintf(buff,"%2.1f",temperature);
+
+#if ENABLEROMAN == 1
+      if (romanFlag) {
+        roman(temperature, valBuf);
+      } else {
+        sprintf(valBuf,"%2.1f", temperature);
+      }
+#else
+      sprintf(valBuf,"%2.1f", temperature);
+#endif
       // Update temperature on LCD
-      lv_label_set_text(label_temperature, buff); 
+      lv_label_set_text(label_temperature, valBuf); 
 
     } else {
       OutputStream->print("Failed to parse PGN: ");  OutputStream->println(N2kMsg.PGN);
@@ -169,7 +214,7 @@ void Temperature(const tN2kMsg &N2kMsg) {
 }
 //*****************************************************************************
 // For PGN 130311
-void TemperatureA(const tN2kMsg &N2kMsg) {
+void Temperature311(const tN2kMsg &N2kMsg) {
     unsigned char SID;
     tN2kTempSource TempSource;
     double ActualTemperature;
@@ -187,13 +232,20 @@ void TemperatureA(const tN2kMsg &N2kMsg) {
       //temperature = ActualTemperature - 273.15; 
       // Convert K to F
       temperature = (ActualTemperature - 273.15) * 1.8 + 32.0; 
-      temperature = -temperature;
         
-      Serial.print("TemperatureA ");
+      Serial.print("Temperature311 ");
       Serial.println(temperature);
-      sprintf(buff,"%2.1f",temperature);
+#if ENABLEROMAN == 1
+      if (romanFlag) {
+        roman(temperature, valBuf);
+      } else {
+        sprintf(valBuf,"%2.1f", temperature);
+      }
+#else
+      sprintf(valBuf,"%2.1f", temperature);
+#endif
       // Update temperature on LCD
-      lv_label_set_text(label_temperature, buff); 
+      lv_label_set_text(label_temperature, valBuf); 
 
     } else {
       OutputStream->print("Failed to parse PGN: ");  OutputStream->println(N2kMsg.PGN);

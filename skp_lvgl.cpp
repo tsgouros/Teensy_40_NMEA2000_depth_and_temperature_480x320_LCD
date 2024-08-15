@@ -29,6 +29,10 @@ lv_obj_t * label_temperature;
 lv_obj_t * label_debug;
 #endif
 
+#if ENABLEROMAN == 1
+bool romanFlag = false;
+#endif
+
 int oldTouchX = 0;
 int oldTouchY = 0;
 lv_indev_t * touchDevice;
@@ -73,7 +77,17 @@ bool my_touchpad_read(lv_indev_drv_t * indev, lv_indev_data_t * data)
     }
 
     // Check if touchpad has been touched.
-    if (touchScreen.touched()) {   
+    if (touchScreen.touched()) {
+
+#if ENABLEROMAN == 1
+      // Toggle the roman numerals.
+      if (romanFlag) {
+        romanFlag = false;
+      } else {
+        romanFlag = true;
+      }
+#endif
+
       // Retrieve a point  
       TS_Point p = touchScreen.getPoint(); 
     
@@ -222,7 +236,7 @@ void skp_lvgl_init(void)
     lv_label_set_align(label_debug, LV_LABEL_ALIGN_RIGHT); 
     lv_obj_set_pos(label_debug, 290, 250);
     lv_obj_add_style(label_debug, LV_OBJ_PART_MAIN, &style_mps);
-    lv_label_set_text(label_debug, "-.-");
+    lv_label_set_text(label_debug, "--");
 #endif
 
     Serial.println("tick.begin");
