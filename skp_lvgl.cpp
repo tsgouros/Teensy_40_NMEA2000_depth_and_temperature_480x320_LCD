@@ -25,6 +25,10 @@ Adafruit_FT6206 touchScreen = Adafruit_FT6206();
 lv_obj_t * label_water_depth; 
 lv_obj_t * gauge1;
 lv_obj_t * label_temperature;
+#if SHOWDEBUG == 1
+lv_obj_t * label_debug;
+#endif
+
 int oldTouchX = 0;
 int oldTouchY = 0;
 lv_indev_t * touchDevice;
@@ -210,6 +214,16 @@ void skp_lvgl_init(void)
     lv_obj_set_pos(label_temperature, 290, 140);
     lv_obj_add_style(label_temperature, LV_OBJ_PART_MAIN, &style_mps);
     lv_label_set_text(label_temperature, "-.-");
+
+#if SHOWDEBUG == 1
+    label_debug = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
+    lv_label_set_long_mode(label_debug, LV_LABEL_LONG_BREAK);
+    lv_obj_set_width(label_debug, 150);
+    lv_label_set_align(label_debug, LV_LABEL_ALIGN_RIGHT); 
+    lv_obj_set_pos(label_debug, 290, 250);
+    lv_obj_add_style(label_debug, LV_OBJ_PART_MAIN, &style_mps);
+    lv_label_set_text(label_debug, "-.-");
+#endif
 
     Serial.println("tick.begin");
     tick.begin(lv_tick_handler, LVGL_TICK_PERIOD * 1000);  // Start ticker

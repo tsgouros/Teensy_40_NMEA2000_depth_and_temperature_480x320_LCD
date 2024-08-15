@@ -9,6 +9,9 @@ extern lv_obj_t * label_water_depth;
 extern lv_obj_t * gauge1;
 extern lv_obj_t * lvneedle;
 extern lv_obj_t * label_temperature;
+#if SHOWDEBUG == 1
+extern lv_obj_t * label_debug;
+#endif
 
 char buff[20];
 
@@ -117,6 +120,12 @@ void Depth(const tN2kMsg &N2kMsg) {
       // another library.)
       DepthAngle_degree = (DepthBelowTransducer/80) * 360;
       if (DepthAngle_degree > 357) DepthAngle_degree = 357.0;
+
+#if SHOWDEBUG == 1      
+      sprintf(buff,"%2.0f", DepthAngle_degree);
+      lv_label_set_text(label_debug, buff);
+#endif
+
       DepthAngle_degree = 900 + DepthAngle_degree * 10;
       Serial.print("Depth direction ");
       Serial.println(DepthAngle_degree);

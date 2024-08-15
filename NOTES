@@ -51,3 +51,9 @@ Also, discovered that extraneous files in the directory cause the
 brain-dead Arduino compiler/IDE to fail silently and refuse to upload
 to the device. So if you're wanting to save a little bit of code for
 the future, either comment it out or save it somewhere else.
+
+15 Aug 2024 (Thu, 18:38)
+
+Added a 'label_debug' that appears on the screen to hold whatever one
+might need to debug something when you are without access to the
+Serial Monitor. There's a SHOWDEBUG flag to toggle in skp_lvgl.h.
