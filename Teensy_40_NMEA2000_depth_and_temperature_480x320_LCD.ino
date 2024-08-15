@@ -138,8 +138,10 @@ void Depth(const tN2kMsg &N2kMsg) {
       Serial.print(DepthBelowTransducer);
       Serial.print(" ");
    
+#if ENGLISHUNITS == 1
       // Depth is in meters. Convert to feet.
       DepthBelowTransducer = DepthBelowTransducer * (39.3/12.0);
+#endif
 
 #if ENABLEROMAN == 1
       if (romanFlag) {
@@ -188,10 +190,13 @@ void Temperature310(const tN2kMsg &N2kMsg) {
                                                AirTemperature,
                                                AirPressure) ) 
     {
-      // Convert K to C
-      //temperature = ActualTemperature - 273.15; 
+#if ENGLISHUNITS == 1
       // Convert K to F
       temperature = (ActualTemperature - 273.15) * 1.8 + 32.0; 
+#else
+      // Convert K to C
+      temperature = ActualTemperature - 273.15; 
+#endif
         
       Serial.print("Temperature310 ");
       Serial.println(temperature);
@@ -228,11 +233,14 @@ void Temperature311(const tN2kMsg &N2kMsg) {
                                         HumiditySource, Humidity,
                                         AirPressure) ) 
     {
-      // Convert K to C
-      //temperature = ActualTemperature - 273.15; 
+#if ENGLISHUNITS == 1
       // Convert K to F
       temperature = (ActualTemperature - 273.15) * 1.8 + 32.0; 
-        
+#else
+      // Convert K to C
+      temperature = ActualTemperature - 273.15; 
+#endif
+
       Serial.print("Temperature311 ");
       Serial.println(temperature);
 #if ENABLEROMAN == 1

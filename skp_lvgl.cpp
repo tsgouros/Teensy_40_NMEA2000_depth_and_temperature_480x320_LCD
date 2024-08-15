@@ -195,7 +195,11 @@ void skp_lvgl_init(void)
     lv_obj_t * label_text_lb = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_pos(label_text_lb, 435, 77);
     lv_obj_add_style(label_text_lb, LV_OBJ_PART_MAIN,&style_text);
+#if ENGLISHUNITS == 1
     lv_label_set_text(label_text_lb, "Ft");
+#else
+    lv_label_set_text(label_text_lb, "MM");
+#endif
 
     lv_obj_t * label_text_temp = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_pos(label_text_temp, 330, 120);
@@ -205,8 +209,11 @@ void skp_lvgl_init(void)
     lv_obj_t * label_text_degree = lv_label_create(lv_disp_get_scr_act(NULL), NULL);
     lv_obj_set_pos(label_text_degree, 450, 166);
     lv_obj_add_style(label_text_degree, LV_OBJ_PART_MAIN,&style_text);
-    //lv_label_set_text(label_text_degree, "°C");
+#if ENGLISHUNITS == 1
     lv_label_set_text(label_text_degree, "°F");
+#else
+    lv_label_set_text(label_text_degree, "°C");
+#endif
 
     static lv_style_t style_mps;
     lv_style_init(&style_mps);

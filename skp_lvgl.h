@@ -7,8 +7,13 @@
 // disable.
 #define SHOWDEBUG 0
 
-// When this is 1, touching the screen will toggle display in roman numerals.
+// When this is 1, touching the screen will toggle display in roman
+// numerals.
 #define ENABLEROMAN 1
+
+// For fun, should implement this flag as a live thing, like the roman
+// numerals. For now, just a compile-time thing.
+#define ENGLISHUNITS 1
 
 #ifdef __cplusplus
 extern "C" {
