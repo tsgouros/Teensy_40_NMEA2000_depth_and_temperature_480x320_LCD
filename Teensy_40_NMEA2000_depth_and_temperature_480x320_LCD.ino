@@ -155,7 +155,7 @@ void Temperature(const tN2kMsg &N2kMsg) {
       // Convert K to C
       //temperature = ActualTemperature - 273.15; 
       // Convert K to F
-      temperature = (ActualTemperature - 273.15) * (9/5) + 32; 
+      temperature = (ActualTemperature - 273.15) * 1.8 + 32.0; 
         
       Serial.print("Temperature ");
       Serial.println(temperature);
@@ -186,7 +186,7 @@ void TemperatureA(const tN2kMsg &N2kMsg) {
       // Convert K to C
       //temperature = ActualTemperature - 273.15; 
       // Convert K to F
-      temperature = (ActualTemperature - 273.15) * (9/5) + 32; 
+      temperature = (ActualTemperature - 273.15) * 1.8 + 32.0; 
       temperature = -temperature;
         
       Serial.print("TemperatureA ");
