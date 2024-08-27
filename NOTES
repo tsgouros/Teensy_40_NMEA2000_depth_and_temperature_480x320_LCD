@@ -61,3 +61,10 @@ Serial Monitor. There's a SHOWDEBUG flag to toggle in skp_lvgl.h.
 15 Aug 2024 (Thu, 19:23)
 
 Added an ENGLISHUNITS flag, for better, um, international relations.
+
+27 Aug 2024 (Tue, 09:23)
+
+n.b. The NMEA2000 library contains a whole bunch of unit conversion
+functions. Look in N2kMessages.h. Wish I had known about that before I
+spent a day looking for the stupid C++ "9/5 = 1" error, but worth
+remembering for the next instrument implementation.
