@@ -68,3 +68,10 @@ n.b. The NMEA2000 library contains a whole bunch of unit conversion
 functions. Look in N2kMessages.h. Wish I had known about that before I
 spent a day looking for the stupid C++ "9/5 = 1" error, but worth
 remembering for the next instrument implementation.
+
+20 Sep 2024 (Fri, 22:02)
+
+URL of a nice site to explain the NMEA 2000 PGNs.
+https://endige.com/2050/nmea-2000-pgns-deciphered/
+
+
