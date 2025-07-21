@@ -61,4 +61,6 @@ You also need to edit a few lines of the `lv_conf.h` file so they read like this
 ```
 This might be a little overkill on the fonts, feel free to audit.
 
+LVGL has a compile issue, that may be related to the copy requirement
+above. See here: https://github.com/lvgl/lvgl/issues/3514#issuecomment-3096199059
 
